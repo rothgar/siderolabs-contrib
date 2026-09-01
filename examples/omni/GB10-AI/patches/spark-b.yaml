@@ -1,0 +1,25 @@
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: "off"
+hostname: gb10-b
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+mount:
+  secure: false
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 100GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: models
+volumeType: partition
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 3500GiB
+  minSize: 2000GiB

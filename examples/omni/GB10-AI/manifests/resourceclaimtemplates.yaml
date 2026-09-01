@@ -1,0 +1,33 @@
+---
+# DeviceClass matching dranet-exposed RDMA-capable interfaces (each CX-7 PF).
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: rdma.dra.net
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == "dra.net" && device.attributes["dra.net"].rdma == true
+---
+# GPU + both ports of the pci0000 CX-7 card. Pinning to one PCIe domain
+# keeps in-pod device naming deterministic (mlx5_0, mlx5_1) so NCCL_IB_HCA
+# in workload pods stays stable. See README for the dual-rail note.
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaimTemplate
+metadata:
+  name: gpu-rdma
+  namespace: inference
+spec:
+  spec:
+    devices:
+      requests:
+        - name: gpu
+          exactly:
+            deviceClassName: gpu.nvidia.com
+        - name: rdma
+          exactly:
+            deviceClassName: rdma.dra.net
+            count: 2
+            selectors:
+              - cel:
+                  expression: device.attributes["dra.net"].?pciAddress.orValue("").startsWith("0000:")

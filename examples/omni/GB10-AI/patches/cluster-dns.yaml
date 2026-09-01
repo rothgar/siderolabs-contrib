@@ -1,0 +1,42 @@
+# CoreDNS `forward` targets public resolvers directly, bypassing whatever
+# DHCP handed the nodes. Applied as a Talos bootstrap manifest so it isn't
+# reverted by Talos's own reconciler.
+cluster:
+  inlineManifests:
+    - name: coredns
+      contents: |
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: coredns
+          namespace: kube-system
+        data:
+          Corefile: |
+            .:53 {
+                errors
+                health {
+                    lameduck 5s
+                }
+                ready
+                log . {
+                    class error
+                }
+                prometheus :9153
+
+                kubernetes cluster.local in-addr.arpa ip6.arpa {
+                    pods insecure
+                    fallthrough in-addr.arpa ip6.arpa
+                    ttl 30
+                }
+                forward . 1.1.1.1 9.9.9.9 8.8.8.8 {
+                   max_concurrent 1000
+                }
+                cache 30 {
+                   disable success cluster.local
+                   disable denial cluster.local
+                }
+                loop
+                reload
+                loadbalance
+            }

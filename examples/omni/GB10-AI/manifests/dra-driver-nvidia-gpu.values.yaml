@@ -1,0 +1,12 @@
+# Talos ships NVIDIA drivers under /usr/local (not the /run/nvidia default
+# the DRA driver assumes).
+nvidiaDriverRoot: /usr/local
+gpuResourcesEnabledOverride: true
+resources:
+  gpus:
+    enabled: true
+kubeletPlugin:
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule

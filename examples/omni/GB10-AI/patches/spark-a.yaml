@@ -1,0 +1,28 @@
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: "off"
+hostname: gb10-a
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+# secure: false drops nosuid,nodev,noexec so the DRA GPU driver's
+# nvidia-cdi-hook (dropped under /var/lib/kubelet/…) can execute.
+mount:
+  secure: false
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 100GiB
+---
+# `models` UserVolume: survives `talosctl reset`, wiped only by --user-disks-wipe.
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: models
+volumeType: partition
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 3500GiB
+  minSize: 2000GiB

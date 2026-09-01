@@ -1,0 +1,10 @@
+# EDIT: replace 10.0.0.0/8 with your LAN CIDR (e.g. 192.168.1.0/24).
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  nvidia.com/gpu: "true"
+  nvidia.com/gpu.present: "true"
+nodeIP:
+  validSubnets:
+    - 10.0.0.0/8

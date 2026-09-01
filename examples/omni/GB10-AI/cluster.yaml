@@ -1,0 +1,82 @@
+# Replace every <PLACEHOLDER> with your real machine UUIDs before syncing.
+# Find them via `omnictl get machinestatuses`.
+kind: Cluster
+name: gb10-ai
+kubernetes:
+  version: 1.35.6
+  manifests:
+    - name: namespaces
+      mode: full
+      file: manifests/namespaces.yaml
+    - name: nvidia-runtimeclass
+      mode: full
+      file: manifests/nvidia-runtimeclass.yaml
+    - name: dra-driver-nvidia-gpu
+      mode: full
+      file: manifests/dra-driver-nvidia-gpu.yaml
+    - name: dranet
+      mode: full
+      file: manifests/dranet.yaml
+    - name: lws
+      mode: full
+      file: manifests/lws.yaml
+    - name: resourceclaimtemplates
+      mode: full
+      file: manifests/resourceclaimtemplates.yaml
+    - name: vllm-lws-example
+      mode: full
+      file: manifests/vllm-lws-example.yaml
+talos:
+  version: v1.14.0-rc.1
+features:
+  enableWorkloadProxy: false
+patches:
+  - file: patches/network.yaml
+  - file: patches/cluster-dns.yaml
+---
+kind: ControlPlane
+machines:
+  - <CONTROL_PLANE_UUID>
+---
+kind: Workers
+machines:
+  - <SPARK_A_UUID>
+  - <SPARK_B_UUID>
+---
+kind: Machine
+name: <CONTROL_PLANE_UUID>
+# Match your CP hardware — e.g. siderolabs/intel-ucode on Intel.
+systemExtensions:
+  - siderolabs/amd-ucode
+patches:
+  - file: patches/control-plane.yaml
+---
+kind: Machine
+name: <SPARK_A_UUID>
+systemExtensions:
+  - siderolabs/nonfree-kmod-nvidia-production
+  - siderolabs/nvidia-container-toolkit-production
+kernelArgs:
+  - talos.dashboard.disabled=1
+  - arm64.nobti
+  - kexec_load_disabled=1
+patches:
+  - file: patches/spark-a.yaml
+  - file: patches/watchdog.yaml
+  - file: patches/gb10-nvidia.yaml
+  - file: patches/gpu-labels.yaml
+---
+kind: Machine
+name: <SPARK_B_UUID>
+systemExtensions:
+  - siderolabs/nonfree-kmod-nvidia-production
+  - siderolabs/nvidia-container-toolkit-production
+kernelArgs:
+  - talos.dashboard.disabled=1
+  - arm64.nobti
+  - kexec_load_disabled=1
+patches:
+  - file: patches/spark-b.yaml
+  - file: patches/watchdog.yaml
+  - file: patches/gb10-nvidia.yaml
+  - file: patches/gpu-labels.yaml

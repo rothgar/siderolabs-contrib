@@ -22,3 +22,4 @@ The examples provided are maintained on a best effort basis and please file issu
 
 - [Omni](./examples/omni)
 - [Omni self-hosted on Talos](./examples/omni-on-talos)
+- [GB10-AI](./examples/omni/GB10-AI)

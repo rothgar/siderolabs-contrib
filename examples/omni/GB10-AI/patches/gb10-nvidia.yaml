@@ -1,0 +1,12 @@
+# NVIDIA + Mellanox modules needed for GPU + RoCE over ConnectX-7.
+machine:
+  kernel:
+    modules:
+      - name: nvidia
+        parameters:
+          - NVreg_CoherentGPUMemoryMode=driver
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+      - name: rdma_ucm
+      - name: ib_umad
