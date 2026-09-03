@@ -4,12 +4,6 @@ This repo contains example setup of Talos/Sidero on different environments.
 
 The examples provided are maintained on a best effort basis and please file issues or create PR's to fix.
 
-## Pulumi Examples
-
-- [azure](./examples/pulumi/azure)
-- [equinix metal](./examples/pulumi/equinix-metal)
-- [google cloud](./examples/pulumi/gcp)
-
 ## Terraform Examples
 
 - [hcloud](./examples/terraform/hcloud)
@@ -22,4 +16,4 @@ The examples provided are maintained on a best effort basis and please file issu
 
 - [Omni](./examples/omni)
 - [Omni self-hosted on Talos](./examples/omni-on-talos)
-- [GB10-AI](./examples/omni/GB10-AI)
+- [GB10-AI](./examples/omni-gb10-ai)
